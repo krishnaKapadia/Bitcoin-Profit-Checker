@@ -44,7 +44,7 @@ class InfoBox extends Component {
 
         <div id="left" className="box">
           <div className="heading">${this.props.liveRate}</div>
-          <div className="subtext">Current rate</div>
+          <div className="subtext">Current rate, NZD</div>
         </div>
 
         <div id="center" className="box">

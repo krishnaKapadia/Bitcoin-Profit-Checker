@@ -23,7 +23,7 @@ class GraphSection extends Component {
 
         <div className="">
           <div className="chart">
-            <LineChart lables={this.props.lables} prices={this.props.prices} data={this.props.data} prev={this.props.prev} />
+            <LineChart data={this.props.data} prev={this.props.prev} />
           </div>
         </div>
 

@@ -11,7 +11,7 @@ class App extends Component {
   constructor(props){
     super(props);
 
-    this.state = { loaded: false, lables: [], prices: [], data: [], rate: '', amount: '', liveRate: '' , profit: '', changePercent: ''};
+    this.state = { loaded: false, data: [], rate: '', amount: '', liveRate: '' , profit: '', changePercent: ''};
   }
 
   componentDidMount() {
@@ -23,19 +23,14 @@ class App extends Component {
     result.then((data) => {
       const sortedData = [];
 
-      const lables = [];
-      const prices = [];
-
       for(let date in data.data.bpi){
-        lables.push(date);
-        prices.push(data.data.bpi[date]);
         sortedData.push({
           date: moment(date).format('MMM DD'),
           y: data.data.bpi[date]
         });
       }
 
-      this.setState({ data: sortedData, lables, prices});
+      this.setState({ data: sortedData });
     });
 
 
@@ -45,7 +40,7 @@ class App extends Component {
 
     profit.then((data) => {
       // Sets exchange rate for 1 BTC
-      this.setState({ liveRate: data.data.NZD.last })
+      this.setState({ liveRate: formatNumber(data.data.NZD.last) })
       console.log(this.state.liveRate);
     }).catch((error) => {
       this.setState({ profit: "Fetching error, please try again!" })
@@ -86,7 +81,7 @@ class App extends Component {
         <div className="App-body">
 
           {/* GRAPH */}
-          <GraphSection data={this.state.data} lables={this.state.lables} prices={this.state.prices} liveRate={this.state.liveRate} prev="10493.30"/>
+          <GraphSection data={this.state.data} liveRate={this.state.liveRate} prev="10493.30"/>
 
 
           {/* INPUTS */}

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import InfoBox from './InfoBox';
 import LineChart from './LineChart';
 
 class GraphSection extends Component {
@@ -12,15 +11,6 @@ class GraphSection extends Component {
   render() {
     return (
       <div className="">
-
-        {/* <div className="row">
-          <h1>30 Day Bitcion Price Chart</h1>
-        </div> */}
-
-        <div className="row">
-          <InfoBox data={this.props.data} liveRate={this.props.liveRate} />
-        </div>
-
         <div className="">
           <div className="chart">
             <LineChart data={this.props.data} prev={this.props.prev} />

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import '../style/LineChart.css';
-import { ReferenceLine, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
-// import { Line } from 'react-chartjs-2';
+import { Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 class Chart extends Component {
 
@@ -9,13 +8,13 @@ class Chart extends Component {
 
     return (
         <LineChart className="chartJS" data={this.props.data} width={800} height={400}>
-            <Line type="monotone" dataKey="y" stroke="#8884d8" />
-            <XAxis dataKey="date"/>
-            <YAxis />
-            <Tooltip/>
-            <CartesianGrid strokeDasharray="3 3"/>
-            {this.props.prev !== '' && <ReferenceLine y={this.props.prev} stroke="green" label="Last Investment" />}
-          </LineChart>
+          <Line type="monotone" dataKey="price" stroke="#8884d8" />
+          <XAxis dataKey="date"/>
+          <YAxis />
+          <Tooltip/>
+          <CartesianGrid strokeDasharray="3 3"/>
+          {/* {this.props.prev !== '' && <ReferenceLine y={this.props.prev} stroke="green" label="Last Investment" />} */}
+        </LineChart>
     );
   }
 }

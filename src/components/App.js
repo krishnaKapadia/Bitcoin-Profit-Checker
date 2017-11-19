@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import '../style/App.css';
 import { Row, Form } from 'react-bootstrap';
 import axios from 'axios';
-import { formatNumber } from '../utils/utils';
 import GraphSection from './GraphSection';
+import InfoBox from './InfoBox';
+import ProfitDisplay from './ProfitDisplay';
 import moment from 'moment';
 
 class App extends Component {
@@ -11,7 +12,8 @@ class App extends Component {
   constructor(props){
     super(props);
 
-    this.state = { loaded: false, data: [], rate: '', amount: '', liveRate: '' , profit: '', changePercent: ''};
+    this.state = { data: [], rate: '', amount: '', prevMonthRate: '', monthChangeD: '', monthChangeP: '',
+        liveRate: '' , profit: '', changePercent: '', lastInvestment: ''};
   }
 
   componentDidMount() {
@@ -26,25 +28,36 @@ class App extends Component {
       for(let date in data.data.bpi){
         sortedData.push({
           date: moment(date).format('MMM DD'),
-          y: data.data.bpi[date]
+          price: data.data.bpi[date]
         });
       }
 
-      this.setState({ data: sortedData });
+      const prevMonthRate = sortedData[0].price;
+      this.setState({ data: sortedData, prevMonthRate });
+
+      // Live price API
+      const url = `https://blockchain.info/ticker`;
+      const profit = axios.get(url);
+
+      profit.then((data) => {
+        // Sets exchange rate for 1 BTC
+        const liveRate = data.data.NZD.last
+
+        // Calculates the dollar change based off previous month
+        const monthChangeD = Math.round((liveRate - this.state.prevMonthRate) * 100) / 100;
+
+        //Calculates the monthly percent change
+        const monthChangeP = Math.round((monthChangeD / this.state.prevMonthRate) * 100)
+
+        //Sets all calculated values
+        this.setState({ liveRate, monthChangeD, monthChangeP })
+
+      }).catch((error) => {
+        this.setState({ profit: "Fetching error, please try again!" })
+      });
+
     });
 
-
-    // Live price API
-    const url = `https://blockchain.info/ticker`;
-    const profit = axios.get(url);
-
-    profit.then((data) => {
-      // Sets exchange rate for 1 BTC
-      this.setState({ liveRate: formatNumber(data.data.NZD.last) })
-      console.log(this.state.liveRate);
-    }).catch((error) => {
-      this.setState({ profit: "Fetching error, please try again!" })
-    });
   }
 
   onRateChange = (event) => {
@@ -59,14 +72,14 @@ class App extends Component {
     event.preventDefault();
 
     // Profit gained or lost
-    const profit = formatNumber(Math.round(((this.state.liveRate - this.state.rate) * this.state.amount) * 100) / 100);
-    this.setState({ profit: `Profit: $${profit}` });
+    const profit = Math.round(((this.state.liveRate - this.state.rate) * this.state.amount) * 100) / 100;
+    this.setState({ profit });
 
 
     // Percentage Change
     const diff = this.state.liveRate - this.state.rate;
     const percentage = Math.round((diff / this.state.rate * 100) * 100) / 100;
-    this.setState({ changePercent: `Percentage: ${percentage}%`})
+    this.setState({ changePercent: percentage })
   }
 
   render() {
@@ -80,8 +93,16 @@ class App extends Component {
 
         <div className="App-body">
 
+
+          {/* INFO BOX SECTION */}
+          <div className="row">
+            <InfoBox data={this.state.data} liveRate={this.state.liveRate}
+                    monthChangeD={this.state.monthChangeD} monthChangeP={this.state.monthChangeP} />
+          </div>
+
+
           {/* GRAPH */}
-          <GraphSection data={this.state.data} liveRate={this.state.liveRate} prev="10493.30"/>
+          <GraphSection data={this.state.data} liveRate={this.state.liveRate} prev="10493.30" />
 
 
           {/* INPUTS */}
@@ -108,22 +129,14 @@ class App extends Component {
 
 
           {/* TOTALS */}
-          {this.state.profit != '' &&
-            <div className="totals">
-              <h3>Totals:</h3>
-              {/* Profit */}
-              <h3>{this.state.profit}</h3>
-              {/* Percentage Change */}
-              <h3>{this.state.changePercent}</h3>
-            </div>
-          }
+          {this.state.profit !== '' &&
+          <ProfitDisplay profit={this.state.profit} changePercent={this.state.changePercent}/> }
 
           <Row className="App-Footer">
-              <h6 className="center">By Krishna Kapadia</h6>
+              <h4 className="center">Created by <a href="http://krishnakapadia.com">Krishna Kapadia</a></h4>
           </Row>
 
         </div>
-
 
 
       </div>

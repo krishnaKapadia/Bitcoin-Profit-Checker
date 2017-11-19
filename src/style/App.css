@@ -42,7 +42,13 @@
 }
 
 .totals {
-  margin-top: 50px;
+  width: 40%;
+  margin: 50px auto;
+  text-align: left;
+}
+
+.marginBottom {
+  margin-bottom: 20px;
 }
 
 h1 {
@@ -60,4 +66,17 @@ h1 {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
+}
+.arrowUp {
+  margin-bottom: 10px;
+  color: green;
+}
+
+.arrowDown {
+  margin-top: -40px;
+  color: red;
+}
+
+a:visited {
+  color: #2196F3;
 }

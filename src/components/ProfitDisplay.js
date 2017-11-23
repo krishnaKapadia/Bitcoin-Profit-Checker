@@ -27,6 +27,19 @@ class ProfitDisplay extends Component {
           </h4>
         </div>
 
+        {/* Second Percentage Change */}
+
+        {this.props.changePercent2 != '' &&
+          <div>
+            <h4>
+              Change %: {formatNumber(this.props.changePercent2)}%
+              {(this.props.changePercent2 > 0) && <FaArrowUp className="arrowUp"/> }
+              {(this.props.changePercent2 < 0) && <FaArrowDown className="arrowDown" />}
+            </h4>
+          </div>
+        }
+
+
       </div>
     );
   }

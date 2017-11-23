@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '../style/App.css';
-import { Row, Form } from 'react-bootstrap';
+import { Row, Col, Form } from 'react-bootstrap';
 import axios from 'axios';
 import GraphSection from './GraphSection';
 import InfoBox from './InfoBox';
@@ -13,7 +13,10 @@ class App extends Component {
     super(props);
 
     this.state = { data: [], rate: '', amount: '', prevMonthRate: '', monthChangeD: '', monthChangeP: '',
-        liveRate: '' , profit: '', changePercent: '', lastInvestment: ''};
+        liveRate: '' , profit: '', changePercent: '', changePercent2: '', lastInvestment: '',
+        investment1: { rate: '10493.30', amount: '0.02663076'},
+        investment2: { rate: '11940.72', amount: '0.02427909'}
+      };
   }
 
   componentDidMount() {
@@ -71,15 +74,37 @@ class App extends Component {
   calculateProfit = (event) => {
     event.preventDefault();
 
-    // Profit gained or lost
-    const profit = Math.round(((this.state.liveRate - this.state.rate) * this.state.amount) * 100) / 100;
-    this.setState({ profit });
+    if(this.state.rate === '0' && this.state.amount === '0'){
+      this.calculateProfitOverall(event);
+    } else {
+      this.setState({ changePercent2 : '' });
+      // Profit gained or lost
+      const profit = Math.round(((this.state.liveRate - this.state.rate) * this.state.amount) * 100) / 100;
+      this.setState({ profit });
 
 
-    // Percentage Change
-    const diff = this.state.liveRate - this.state.rate;
-    const percentage = Math.round((diff / this.state.rate * 100) * 100) / 100;
-    this.setState({ changePercent: percentage })
+      // Percentage Change
+      const diff = this.state.liveRate - this.state.rate;
+      const percentage = Math.round((diff / this.state.rate * 100) * 100) / 100;
+      this.setState({ changePercent: percentage })
+    }
+  }
+
+  calculateProfitOverall = (event) => {
+    event.preventDefault();
+
+    const profit1 = Math.round(((this.state.liveRate - this.state.investment1.rate) * this.state.investment1.amount) * 100) / 100;
+    const profit2 = Math.round(((this.state.liveRate - this.state.investment2.rate) * this.state.investment2.amount) * 100 ) / 100;
+    const totalProfit = profit1 + profit2;
+    this.setState( { profit: totalProfit });
+
+    const diff1 = this.state.liveRate - this.state.investment1.rate;
+    const percentage1 = Math.round((diff1 / this.state.investment1.rate * 100) * 100) / 100;
+    this.setState({ changePercent: percentage1 })
+
+    const diff2 = this.state.liveRate - this.state.investment2.rate;
+    const percentage2 = Math.round((diff2 / this.state.investment2.rate * 100) * 100) / 100;
+    this.setState({ changePercent2: percentage2 })
   }
 
   render() {
@@ -104,7 +129,6 @@ class App extends Component {
           {/* GRAPH */}
           <GraphSection data={this.state.data} liveRate={this.state.liveRate} prev="10493.30" />
 
-
           {/* INPUTS */}
           <div className="input">
             <Form onSubmit={this.calculateProfit} className="input-group">
@@ -124,13 +148,14 @@ class App extends Component {
 
                 <button className="btn btn-success btn-primary">Calculate</button>
             </Form>
+
           </div>
 
 
 
           {/* TOTALS */}
           {this.state.profit !== '' &&
-          <ProfitDisplay profit={this.state.profit} changePercent={this.state.changePercent}/> }
+          <ProfitDisplay profit={this.state.profit} changePercent={this.state.changePercent} changePercent2={this.state.changePercent2}/> }
 
           <Row className="App-Footer">
               <h4 className="center">Created by <a href="http://krishnakapadia.com">Krishna Kapadia</a></h4>
